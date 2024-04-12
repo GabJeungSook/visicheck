@@ -2,12 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:visitor_management/components/news_list.dart';
 import 'package:visitor_management/layout/sidebar.dart';
 import 'package:visitor_management/layout/topbar.dart';
+import 'package:visitor_management/pages/dashboard.dart';
+import 'package:visitor_management/pages/department.dart';
+import 'package:visitor_management/pages/home.dart';
+import 'package:visitor_management/pages/users.dart';
+import 'package:visitor_management/pages/visitors.dart';
 
 import '../constaints.dart';
 
-class MainLayout extends StatelessWidget {
+class MainLayout extends StatefulWidget {
   final Widget child;
   MainLayout({Key? key, required this.child}) : super(key: key);
+
+  @override
+  State<MainLayout> createState() => _MainLayoutState();
+}
+
+class _MainLayoutState extends State<MainLayout> {
+  List<Widget> _pages = [
+    Home(), 
+    Department(), 
+    Users(),
+    Visitors(),
+  ];
+
+  int initial_page = 0;
+  void changePageIndex(int index)
+  {
+
+
+    setState(() {
+      initial_page = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,19 +44,9 @@ class MainLayout extends StatelessWidget {
         body: SafeArea(
       child: Row(
         children: [
-          SideBar(),
+          SideBar(changePageIndex: changePageIndex, activeIndex: initial_page),
           Expanded(
-            child: Column(
-              children: [
-                TopBar(_showDesktop),
-                Expanded(
-                    child: SingleChildScrollView(
-                        child: Padding(
-                  child: this.child,
-                  padding: EdgeInsets.all(componentPadding),
-                )))
-              ],
-            ),
+            child: _pages[initial_page],
           ),
           Container(
             width: _showDesktop ? newsPageWidth : 0,

@@ -41,23 +41,5 @@ class AdminDashboard extends StatelessWidget {
   //   );
   // }
 
-  Future<void> _signOut(BuildContext context) async {
-  try {
-    await FirebaseAuth.instance.signOut();
-    // After successful sign out, navigate back to login or any desired page
-    Navigator.pushReplacement(context,
-      MaterialPageRoute(builder: (context) => const LoginPage()), // Replace with desired page
-    );
 
-    // Optional: Show confirmation message (e.g., using a SnackBar)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('You have been signed out.'),
-      ),
-    );
-  } on FirebaseAuthException catch (e) {
-    // Handle sign out errors (optional)
-    print(e.message); // For debugging
-  }
-}
 }
