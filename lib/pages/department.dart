@@ -17,15 +17,13 @@ class _DepartmentState extends State<Department> {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-Future<List<Map<String, dynamic>>> getUsers() async {
-  final usersCollection = firestore.collection('users');
-  final snapshot = await usersCollection.get();
-  final userDocs = snapshot.docs;
-
-  // Extract user data from each document
-  final users = userDocs.map((doc) => doc.data()).toList();
-
-  return users;
+Stream<List<Map<String, dynamic>>> getUsers() {
+  final usersCollection = FirebaseFirestore.instance.collection('users');
+  return usersCollection.snapshots().map((snapshot) {
+    final userDocs = snapshot.docs;
+    final users = userDocs.map((doc) => doc.data()).toList();
+    return users;
+  });
 }
 
   @override
@@ -60,15 +58,15 @@ Future<List<Map<String, dynamic>>> getUsers() async {
           ),
         Container(
           width: double.infinity,
-          child: FutureBuilder<List<Map<String, dynamic>>>(
-            future: getUsers(), // Call the getUsers function
+           child: StreamBuilder<List<Map<String, dynamic>>>(
+            stream: getUsers(), // Use the updated getUsers method
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 // Extract the list of users from the snapshot
                 final users = snapshot.data!;
 
                 return DataTable(
-                  columnSpacing: 16.0,
+                 columnSpacing: 16.0,
                   columns: const [
                     DataColumn(label: Text('Name')),
                     DataColumn(label: Text('Email')),
