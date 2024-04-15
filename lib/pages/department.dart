@@ -17,27 +17,25 @@ class _DepartmentState extends State<Department> {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  CollectionReference _collectionRef =
-      FirebaseFirestore.instance.collection('users');
-  Future<void> getData() async {
-    // Get docs from collection reference
-    QuerySnapshot querySnapshot = await _collectionRef.get();
+Future<List<Map<String, dynamic>>> getUsers() async {
+  final usersCollection = firestore.collection('users');
+  final snapshot = await usersCollection.get();
+  final userDocs = snapshot.docs;
 
-    // Get data from docs and convert map to List
-    final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+  // Extract user data from each document
+  final users = userDocs.map((doc) => doc.data()).toList();
 
-    print(allData);
-  }
+  return users;
+}
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Add User button with icon
-          Row(
+  return Container(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               ElevatedButton.icon(
@@ -56,89 +54,64 @@ class _DepartmentState extends State<Department> {
                     return AddUserForm(); // Replace with your form widget
                   },
                 );
-                  // _collectionRef
-                  //     .add({
-                  //       'name': 'test3', // John Doe
-                  //       'email': 'test@test3.com',
-                  //       'password': 'test3',
-                  //       'department': 'IT' // 42
-                  //     })
-                  //     .then((value) => print("User Added"))
-                  //     .catchError(
-                  //         (error) => print("Failed to add user: $error"));
-                  // Handle add user action
                 },
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          // Wrap DataTable with Container for full width
-          Container(
-            width: double.infinity,
-            child: DataTable(
-              columnSpacing: 16.0, // Adjust column spacing as needed
-              columns: const [
-                DataColumn(label: Text('Name')),
-                DataColumn(label: Text('Email')),
-                DataColumn(label: Text('Department')),
-                DataColumn(label: Text('Action')),
-              ],
-              rows: [
-                DataRow(
-                  cells: [
-                    DataCell(Text('Department 1')),
-                    DataCell(Text('Email')),
-                    DataCell(Text('Department')),
-                    DataCell(
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              // Handle edit action
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              // Handle delete action
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+        Container(
+          width: double.infinity,
+          child: FutureBuilder<List<Map<String, dynamic>>>(
+            future: getUsers(), // Call the getUsers function
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                // Extract the list of users from the snapshot
+                final users = snapshot.data!;
+
+                return DataTable(
+                  columnSpacing: 16.0,
+                  columns: const [
+                    DataColumn(label: Text('Name')),
+                    DataColumn(label: Text('Email')),
+                    DataColumn(label: Text('Department')),
+                    DataColumn(label: Text('Action')),
                   ],
-                ),
-                DataRow(
-                  cells: [
-                    const DataCell(Text('Department 2')),
-                    DataCell(Text('Email')),
-                    DataCell(Text('Department')),
-                    DataCell(
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              // Handle edit action
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              // Handle delete action
-                            },
-                          ),
-                        ],
+                  rows: users.map((userData) => DataRow(
+                    cells: [
+                      DataCell(Text(userData['name'] ?? '')),
+                      DataCell(Text(userData['email'] ?? '')),
+                      DataCell(Text(userData['department'] ?? '')),
+                      DataCell(
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                // Handle edit action with user data
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                // Handle delete action with user data
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                    ],
+                  )).toList(),
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+
+              // Display a loading indicator while data is being fetched
+              return const CircularProgressIndicator();
+            },
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }

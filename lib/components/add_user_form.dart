@@ -1,9 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class AddUserForm extends StatefulWidget {
   @override
   _AddUserFormState createState() => _AddUserFormState();
 }
+
+FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+CollectionReference _collectionRef =
+    FirebaseFirestore.instance.collection('users');
 
 class _AddUserFormState extends State<AddUserForm> {
   final _formKey = GlobalKey<FormState>();
@@ -33,23 +39,27 @@ class _AddUserFormState extends State<AddUserForm> {
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(labelText: 'Name'),
-              validator: (value) => value!.isEmpty ? 'Please enter a name' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a name' : null,
             ),
             TextFormField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
-              validator: (value) => value!.isEmpty ? 'Please enter an email' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter an email' : null,
             ),
             TextFormField(
               controller: _passwordController,
               decoration: const InputDecoration(labelText: 'Password'),
-              validator: (value) => value!.isEmpty ? 'Please enter a password' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a password' : null,
               obscureText: true, // Hide password text
             ),
             TextFormField(
               controller: _departmentController,
               decoration: const InputDecoration(labelText: 'Department'),
-              validator: (value) => value!.isEmpty ? 'Please enter a department' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a department' : null,
             ),
             SizedBox(height: 16),
             Row(
@@ -65,6 +75,22 @@ class _AddUserFormState extends State<AddUserForm> {
                       final email = _emailController.text;
                       final password = _passwordController.text;
                       final department = _departmentController.text;
+
+                      _collectionRef
+                          .add({
+                            'name': name, // John Doe
+                            'email': email,
+                            'password': password,
+                            'department': department // 42
+                          })
+                          .then(
+                            (value) => const SnackBar(
+                              content: Text('User added successfully!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          )
+                          .catchError(
+                              (error) => print("Failed to add user: $error"));
 
                       // Implement your logic to add the user to Firestore...
 

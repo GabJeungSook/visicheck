@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My Flutter Web App',
+      title: 'VisiCheck',
       home: 
       FirebaseAuth.instance.currentUser != null ? const AdminDashboard() : const LoginPage(), 
     );
