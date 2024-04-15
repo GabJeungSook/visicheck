@@ -3,8 +3,10 @@ import 'package:visitor_management/constaints.dart';
 import 'package:visitor_management/pages/news.dart';
 
 class TopBar extends StatelessWidget {
-  final bool _showDesktop;
-  const TopBar([this._showDesktop = false]);
+  // final bool showDesktop;
+  final String? changePageText;
+
+  const TopBar({super.key, this.changePageText});
 
   @override
   Widget build(BuildContext context) {
@@ -21,16 +23,16 @@ class TopBar extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    'Dashboard',
+                    changePageText!,
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
                   ),
                 ),
                 Positioned(
                   child: Container(
                     height: 4,
-                    width: 150,
+                    width: changePageText == 'Dashboard' ? 120 : 70 ,
                     decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
+                        color: primaryAncient,
                         borderRadius: BorderRadius.circular(4)),
                   ),
                   bottom: 0,

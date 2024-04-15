@@ -12,7 +12,7 @@ class Dashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return MainLayout(
       child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         StatusList(),
         // Charts(),

@@ -30,7 +30,7 @@ class OrderTable extends StatelessWidget {
                   Container(
                     child: Icon(
                       order.icon,
-                      color: Theme.of(context).primaryColor,
+                      color: Colors.green.shade200,
                     ),
                     width: 42,
                     height: 42,

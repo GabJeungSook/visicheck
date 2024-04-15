@@ -10,9 +10,7 @@ import '../model.dart';
 
 final List<MenuItem> menuItems = [
   MenuItem('Dashboard', Icons.dashboard_outlined),
-  MenuItem('Department', Icons.person),
-  MenuItem('Users', Icons.person_add_alt_outlined),
-  MenuItem('Visitors', Icons.person_add_alt_outlined),
+  MenuItem('Users', Icons.person),
 ];
 
 class SideBar extends StatelessWidget {
@@ -41,7 +39,7 @@ class SideBar extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8), color: primaryAncient),
+            borderRadius: BorderRadius.circular(8), color: primaryAncient),
             width: 240,
             height: 60,
             child: const Center(
@@ -80,7 +78,7 @@ class SideBar extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () => _signOut(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.greenAccent,
+                backgroundColor: primaryAncient,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),

@@ -9,6 +9,7 @@ const Home({ Key? key }) : super(key: key);
   @override
   Widget build(BuildContext context){
      return Container(
+      padding: EdgeInsets.only(left: componentPadding, right: componentPadding, top: 50),
        child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

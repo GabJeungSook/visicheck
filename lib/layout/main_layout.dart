@@ -21,20 +21,19 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   List<Widget> _pages = [
     Home(), 
-    Department(), 
-    Users(),
-    Visitors(),
+    Department(),
   ];
 
   int initial_page = 0;
+
   void changePageIndex(int index)
   {
-
-
     setState(() {
       initial_page = index;
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +45,16 @@ class _MainLayoutState extends State<MainLayout> {
         children: [
           SideBar(changePageIndex: changePageIndex, activeIndex: initial_page),
           Expanded(
-            child: _pages[initial_page],
+            child: Column(
+              children: [
+                TopBar(
+                  changePageText: initial_page == 0 ? 'Dashboard' : 'Users',
+                ),
+                Expanded(
+                  child: _pages[initial_page],
+                ),
+              ],
+            ),
           ),
           Container(
             width: _showDesktop ? newsPageWidth : 0,
