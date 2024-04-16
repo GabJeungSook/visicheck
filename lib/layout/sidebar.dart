@@ -39,17 +39,11 @@ class SideBar extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8), color: primaryAncient),
+            borderRadius: BorderRadius.circular(8), color: Colors.white),
             width: 240,
-            height: 60,
-            child: const Center(
-              child: Text(
-                'VisiCheck',
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
+            height: 100,
+            child:  Center(
+              child: Image.asset('imgs/visicheck.png', width: 190, height: 180),
             ),
           ),
           const SizedBox(
