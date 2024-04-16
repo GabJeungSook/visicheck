@@ -273,7 +273,14 @@ class _UserDashboardState extends State<UserDashboard> {
                           _nameController.clear();
                           _purposeController.clear();
                           _departmentController.clear();
-                          //clear form
+                          Future.delayed(const Duration(milliseconds: 500), () {
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   const SnackBar(
+                          //     content: Text('Visitor added successfully!'),
+                          //     backgroundColor: Colors.green,
+                          //   ),
+                          // );
+                        });
                         
                         }).catchError((error) {
                           print("Failed to add visitor: $error");
