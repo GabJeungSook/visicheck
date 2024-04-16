@@ -66,105 +66,141 @@ class _DepartmentState extends State<Department> {
               stream: getUsers(), // Use the updated getUsers method
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  // Extract the list of users from the snapshot
                   final users = snapshot.data!;
-
-                  return DataTable(
-                    columnSpacing: 16.0,
-                    columns: const [
-                      DataColumn(label: Text('Name')),
-                      DataColumn(label: Text('Email')),
-                      DataColumn(label: Text('Department')),
-                      DataColumn(label: Text('Action')),
-                    ],
-                    rows: users
-                        .map((userData) => DataRow(
-                              cells: [
-                                DataCell(Text(userData['name'] ?? '')),
-                                DataCell(Text(userData['email'] ?? '')),
-                                DataCell(Text(userData['department'] ?? '')),
-                                DataCell(
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.edit),
-                                        onPressed: () {
-                                          // Get the user data for the current row
-                                          showModalBottomSheet(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return EditUserForm(
-                                                  userData: userData);
-                                            },
-                                          );
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.delete),
-                                        onPressed: () async {
+                  if (users.isEmpty) {
+                    // Show image for empty user list
+                    return Center(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 50.0), 
+                          const Text('No users found!',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          )
+                          ), // Text
+                          const SizedBox(height: 16.0), // Spacing
+                          Image.asset(
+                            'imgs/empty_users.png', // Replace with your image path
+                            width: 250.0,
+                            height: 250.0,
+                          )
+                        ],
+                      ),
+                    );
+                  } else {
+                    // Show DataTable for users
+                    return DataTable(
+                      columnSpacing: 16.0,
+                      columns: const [
+                        DataColumn(label: Text('Name')),
+                        DataColumn(label: Text('Email')),
+                        DataColumn(label: Text('Department')),
+                        DataColumn(label: Text('Action')),
+                      ],
+                      rows: users
+                          .map((userData) => DataRow(
+                                cells: [
+                                  DataCell(Text(userData['name'] ?? '')),
+                                  DataCell(Text(userData['email'] ?? '')),
+                                  DataCell(Text(userData['department'] ?? '')),
+                                  DataCell(
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(Icons.edit),
+                                          onPressed: () {
+                                            // Get the user data for the current row
+                                            showModalBottomSheet(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return EditUserForm(
+                                                    userData: userData);
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.delete),
+                                          onPressed: () async {
                                             final confirmed = await showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text('Confirm Edit User'),
-                                                content: Text(
-                                                  'Are you sure you want to edit this user with the following details:\n\n'
-                                                  'Name: ${userData['name']}\n'
-                                                  'Email: ${userData['email']}\n'
-                                                  'Department: ${userData['department']}',
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    child: const Text('Cancel'),
-                                                    onPressed: () =>
-                                                        Navigator.pop(context, false),
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Confirm Edit User'),
+                                                  content: Text(
+                                                    'Are you sure you want to edit this user with the following details:\n\n'
+                                                    'Name: ${userData['name']}\n'
+                                                    'Email: ${userData['email']}\n'
+                                                    'Department: ${userData['department']}',
                                                   ),
-                                                  TextButton(
-                                                    child: const Text('Confirm'),
-                                                    onPressed: () =>
-                                                        Navigator.pop(context, true),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                           if (confirmed ?? false) {
-                                               firestore.collection('users')
-                                                  .where('id', isEqualTo: userData['id'])
+                                                  actions: [
+                                                    TextButton(
+                                                      child:
+                                                          const Text('Cancel'),
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context, false),
+                                                    ),
+                                                    TextButton(
+                                                      child:
+                                                          const Text('Confirm'),
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context, true),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                            if (confirmed ?? false) {
+                                              firestore
+                                                  .collection('users')
+                                                  .where('id',
+                                                      isEqualTo: userData['id'])
                                                   .get()
                                                   .then((snapshot) {
-                                                snapshot.docs.forEach((doc) => doc.reference.delete());
-                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                snapshot.docs.forEach((doc) =>
+                                                    doc.reference.delete());
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
                                                   const SnackBar(
-                                                    content: Text('User deleted successfully!'),
-                                                    backgroundColor: Colors.green,
+                                                    content: Text(
+                                                        'User deleted successfully!'),
+                                                    backgroundColor:
+                                                        Colors.green,
                                                   ),
                                                 );
                                               }).catchError((error) {
-                                                print("Failed to delete user: $error");
-                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                print(
+                                                    "Failed to delete user: $error");
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
                                                   const SnackBar(
-                                                    content: Text('Error deleting user!'),
+                                                    content: Text(
+                                                        'Error deleting user!'),
                                                     backgroundColor: Colors.red,
                                                   ),
                                                 );
                                               });
                                             }
-                                        },
-                                      ),
-                                    ],
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ))
-                        .toList(),
-                  );
+                                ],
+                              ))
+                          .toList(),
+                    );
+                  }
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
+                } else {
+                  // Show loading indicator while data is being fetched
+                  return const CircularProgressIndicator();
                 }
-
-                // Display a loading indicator while data is being fetched
-                return const CircularProgressIndicator();
               },
             ),
           ),
