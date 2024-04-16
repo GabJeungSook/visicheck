@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AddUserForm extends StatefulWidget {
@@ -123,9 +124,16 @@ class _AddUserFormState extends State<AddUserForm> {
                       );
 
                       if (confirmed ?? false) {
+                         // Create user with email and password
+                        final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                          email: email,
+                          password: password,
+                        );
+                         // Get the newly created user
+                        final user = userCredential.user!;
                         // Add user to Firestore
                         await _collectionRef.add({
-                          'id' : _collectionRef.doc().id,
+                          'id' : user.uid,
                           'name': name,
                           'email': email,
                           'password': password,

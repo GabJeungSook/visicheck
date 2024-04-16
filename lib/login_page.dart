@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:visitor_management/user_dashboard.dart';
 import 'admin_dashboard.dart'; // Import the admin dashboard
 import 'package:google_fonts/google_fonts.dart';
 
@@ -14,8 +16,9 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>(); // Use a single form key
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  Icon myIcon =
-      Icon(Icons.check_circle, color: Colors.green); // Replace with your icon
+  Icon myIcon = Icon(Icons.check_circle, color: Colors.green); // Replace with your icon
+  
+
   Future<void> _signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       // Validate form before sign in
@@ -34,10 +37,25 @@ class _LoginPageState extends State<LoginPage> {
         );
 
         // Navigate to home or other authenticated screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => AdminDashboard()),
-        );
+        if(email == 'admin@gmail.com')
+        {
+            Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AdminDashboard()),
+            );
+        }else{
+          //get user data and pass to user dashboard
+          var userData = FirebaseFirestore.instance.collection('users');
+          var thisUser = userData.where('email', isEqualTo: email).get().then((value) => 
+          value.docs.forEach((element) {
+            Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => UserDashboard(user: element.data())),
+            );
+          })
+          );
+        }
+        
       } on FirebaseAuthException catch (e) {
         String message = 'Login failed';
         // Handle specific login errors and provide more informative messages
@@ -91,20 +109,8 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      style: GoogleFonts.rubik(
-                        textStyle: const TextStyle(fontSize: 40, color: Colors.green),
-                      ),
-                      children: [
-                        WidgetSpan(
-                            child: myIcon,
-                            alignment: PlaceholderAlignment.middle),
-                        const TextSpan(text: ' VisiCheck'),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 80),
+                   Image.asset('imgs/visicheck.png', width: 450, height: 100),
+                  const SizedBox(height: 60),
                   TextFormField(
                     controller: _emailController,
                     decoration: const InputDecoration(
