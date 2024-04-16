@@ -17,12 +17,30 @@ class Order {
 }
 
 class News {
-  final String title;
-  final String imgUrl;
-  final String time;
-  final String description;
+  final String department;
+  final String department_type;
+  final String imageUrl;
+  final String name;
+  final String purpose;
+  final String timestamp;
 
-  News(this.time, this.title, this.imgUrl, [this.description = '']);
+  News({
+    required this.department,
+    required this.department_type,
+    required this.imageUrl,
+    required this.name,
+    required this.purpose,
+    required this.timestamp,
+  });
+
+  factory News.fromMap(Map<String, dynamic> data) => News(
+        department: data['department'] ?? '', // Handle potential null values
+        department_type: data['department_type'] ?? '',
+        imageUrl: data['imageUrl'] ?? '',
+        name: data['name'] ?? '',
+        purpose: data['purpose'] ?? '',
+         timestamp: data['timestamp'] ?? '',
+      );
 }
 
 class BussinessStatus {

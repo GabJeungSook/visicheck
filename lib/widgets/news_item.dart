@@ -1,10 +1,11 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:visitor_management/constaints.dart';
 import 'package:visitor_management/model.dart';
 
 class NewsItem extends StatelessWidget {
   final News data;
-  const NewsItem(this.data);
+  const NewsItem(this.data, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +21,11 @@ class NewsItem extends StatelessWidget {
           Container(
             width: 70,
             height: 70,
+            child: Image.asset('imgs/visitor.png'),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
                 color: primary,
-                image: DecorationImage(
-                fit: BoxFit.cover, image: AssetImage(data.imgUrl))),
+                ),
           ),
           SizedBox(
             width: 14,
@@ -34,7 +35,7 @@ class NewsItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  data.title,
+                  'Name: ' + data.name,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -43,7 +44,7 @@ class NewsItem extends StatelessWidget {
                   height: 4,
                 ),
                 Text(
-                  data.description,
+                  'Purpose: ' + data.purpose,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
@@ -51,8 +52,28 @@ class NewsItem extends StatelessWidget {
                 SizedBox(
                   height: 4,
                 ),
+                 Text(
+                  'From: ' + data.department_type,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                ),
+                 SizedBox(
+                  height: 4,
+                ),
+                 Text(
+                  'Visited At: ' + data.department,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                ),
+                 SizedBox(
+                  height: 4,
+                ),
                 Text(
-                  data.time,
+                 data.timestamp != null
+                  ? DateFormat('MMMM dd, yyyy hh:mm a').format(DateTime.parse(data.timestamp))
+                  : '',
                   style: TextStyle(
                       fontWeight: FontWeight.w300,
                       fontStyle: FontStyle.italic,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:visitor_management/constaints.dart';
 import 'package:visitor_management/login_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class UserDashboard extends StatefulWidget {
  final Map<String, dynamic>? user;
@@ -268,19 +269,11 @@ class _UserDashboardState extends State<UserDashboard> {
                           'purpose': purpose,
                           'department_type': widget.user?['department'],
                           'department': department,
-                          'timestamp': FieldValue.serverTimestamp(),
+                          'timestamp': DateTime.now().toIso8601String(),
                         }).then((value) {
                           _nameController.clear();
                           _purposeController.clear();
                           _departmentController.clear();
-                          Future.delayed(const Duration(milliseconds: 500), () {
-                          // ScaffoldMessenger.of(context).showSnackBar(
-                          //   const SnackBar(
-                          //     content: Text('Visitor added successfully!'),
-                          //     backgroundColor: Colors.green,
-                          //   ),
-                          // );
-                        });
                         
                         }).catchError((error) {
                           print("Failed to add visitor: $error");
