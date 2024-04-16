@@ -53,7 +53,7 @@ class NewsItem extends StatelessWidget {
                   height: 4,
                 ),
                  Text(
-                  'From: ' + data.department_type,
+                  'From: ' + data.department,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
@@ -62,7 +62,7 @@ class NewsItem extends StatelessWidget {
                   height: 4,
                 ),
                  Text(
-                  'Visited At: ' + data.department,
+                  'Visited At: ' + data.department_type,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
