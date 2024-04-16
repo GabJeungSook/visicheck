@@ -29,7 +29,7 @@ class _NewsListState extends State<NewsList> {
 
   Future<void> _fetchData() async {
     final collection = FirebaseFirestore.instance.collection('visitors');
-    final snapshot = await collection.get();
+    final snapshot = await collection.orderBy('timestamp', descending: true).get();
     final documents = snapshot.docs;
 
     _news = documents.map((doc) => News.fromMap(doc.data())).toList();
