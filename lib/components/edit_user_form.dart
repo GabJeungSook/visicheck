@@ -1,32 +1,38 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class AddUserForm extends StatefulWidget {
+class EditUserForm extends StatefulWidget {
+  final Map<String, dynamic> userData;
+
+  EditUserForm({required this.userData});
+
   @override
-  _AddUserFormState createState() => _AddUserFormState();
+  _EditUserFormState createState() => _EditUserFormState();
+
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  CollectionReference _collectionRef =
+      FirebaseFirestore.instance.collection('users');
 }
 
-FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-CollectionReference _collectionRef =
-    FirebaseFirestore.instance.collection('users');
-
-class _AddUserFormState extends State<AddUserForm> {
+class _EditUserFormState extends State<EditUserForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _departmentController = TextEditingController();
   String? _selectedDepartment;
+  // ... other controllers for department, password (if editable)
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _departmentController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    // Pre-populate controllers with user data
+    _nameController.text = widget.userData['name'];
+    _emailController.text = widget.userData['email'];
+    _selectedDepartment = widget.userData['department'];
+    // ... pre-populate other controllers
   }
+
+  // ... form building logic similar to your add user form
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +55,15 @@ class _AddUserFormState extends State<AddUserForm> {
               validator: (value) =>
                   value!.isEmpty ? 'Please enter an email' : null,
             ),
-            TextFormField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              validator: (value) =>
-                  value!.isEmpty ? 'Please enter a password' : null,
-              obscureText: true, // Hide password text
-            ),
+            // TextFormField(
+            //   controller: _passwordController,
+            //   decoration: const InputDecoration(labelText: 'Password'),
+            //   validator: (value) =>
+            //       value!.isEmpty ? 'Please enter a password' : null,
+            //   obscureText: true, // Hide password text
+            // ),
             DropdownButtonFormField<String>(
-              value: _selectedDepartment, // Current selected department
+              value: _selectedDepartment,
               hint: const Text('Select Department'), // Hint text
               validator: (value) =>
                   value == null ? 'Please select a department' : null,
@@ -86,22 +92,21 @@ class _AddUserFormState extends State<AddUserForm> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton(
-                  child: const Text('Add User'),
+                  child: const Text('Edit User'),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final name = _nameController.text;
                       final email = _emailController.text;
-                      final password = _passwordController.text;
                       final department = _selectedDepartment;
-
+                      final userId = widget.userData['id'];
                       // Confirmation dialog
                       final confirmed = await showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: const Text('Confirm Add User'),
+                            title: const Text('Confirm Edit User'),
                             content: Text(
-                              'Are you sure you want to add a new user with the following details:\n\n'
+                              'Are you sure you want to edit this user with the following details:\n\n'
                               'Name: $name\n'
                               'Email: $email\n'
                               'Department: $department',
@@ -123,28 +128,29 @@ class _AddUserFormState extends State<AddUserForm> {
                       );
 
                       if (confirmed ?? false) {
-                        // Add user to Firestore
-                        await _collectionRef.add({
-                          'id' : _collectionRef.doc().id,
-                          'name': name,
-                          'email': email,
-                          'password': password,
-                          'department': department,
-                           'timestamp': FieldValue.serverTimestamp(),
-                        }).then((value) {
-                          // Show Snackbar on success
+                        widget._collectionRef
+                            .where('id', isEqualTo: userId)
+                            .get()
+                            .then((snapshot) {
+                          snapshot.docs.forEach((doc) {
+                            doc.reference.update({
+                              'name': name,
+                              'email': email,
+                              'department': department
+                            });
+                          });
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('User added successfully!'),
+                              content: Text('User updated successfully!'),
                               backgroundColor: Colors.green,
                             ),
                           );
-                          Navigator.pop(context); // Close the modal
+                          Navigator.pop(context);
                         }).catchError((error) {
-                          print("Failed to add user: $error");
+                          print("Failed to update user: $error");
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Error adding user!'),
+                              content: Text('Error updating user!'),
                               backgroundColor: Colors.red,
                             ),
                           );
