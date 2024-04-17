@@ -108,7 +108,7 @@ class _DepartmentState extends State<Department> {
                                     Row(
                                       children: [
                                         IconButton(
-                                          icon: Icon(Icons.edit),
+                                          icon: Icon(Icons.edit, color: Colors.green.shade500),
                                           onPressed: () {
                                             // Get the user data for the current row
                                             showModalBottomSheet(
@@ -121,7 +121,7 @@ class _DepartmentState extends State<Department> {
                                           },
                                         ),
                                         IconButton(
-                                          icon: Icon(Icons.delete),
+                                          icon: Icon(Icons.delete, color: Colors.red.shade700),
                                           onPressed: () async {
                                             final confirmed = await showDialog(
                                               context: context,
