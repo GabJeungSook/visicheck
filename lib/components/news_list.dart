@@ -15,17 +15,28 @@ class NewsList extends StatefulWidget {
 class _NewsListState extends State<NewsList> {
   List<News> _news = []; // Store fetched visitor data
   
-    Stream<List<Map<String, dynamic>>> getVisitors() {
-    final visitorsCollection = FirebaseFirestore.instance.collection('visitors');
-    return visitorsCollection
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) {
+Stream<List<Map<String, dynamic>>> getVisitors() {
+  final today = DateTime.now();
+  final year = today.year;
+  final month = today.month;
+  final day = today.day;
+
+  // Format the start and end date strings in YYYY-MM-DD format
+  final startDateString = '$year-$month-$day';
+  final endDateString = '${year}-${month}-${day+1}';
+
+  final visitorsCollection = FirebaseFirestore.instance.collection('visitors');
+  return visitorsCollection
+    .where('timestamp', isGreaterThanOrEqualTo: startDateString)
+    .where('timestamp', isLessThan: endDateString)
+    .orderBy('timestamp', descending: true)
+    .snapshots()
+    .map((snapshot) {
       final visitorDocs = snapshot.docs;
       final visitors = visitorDocs.map((doc) => doc.data()).toList();
       return visitors;
     });
-  }
+}
 
   Future<void> _fetchData() async {
     final collection = FirebaseFirestore.instance.collection('visitors');
@@ -39,12 +50,13 @@ class _NewsListState extends State<NewsList> {
   @override
   void initState() {
     super.initState();
-    getVisitors(); // Fetch data on widget initialization
+    //getVisitors(); // Fetch data on widget initialization
   }
 
 
   @override
   Widget build(BuildContext context) {
+    
     return Container(
       color: primaryLight.withAlpha(100),
       padding: EdgeInsets.symmetric(horizontal: componentPadding),
@@ -63,7 +75,7 @@ class _NewsListState extends State<NewsList> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      'Visitors List',
+                      'Visitor List',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                   ),
