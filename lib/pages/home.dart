@@ -96,8 +96,8 @@ class _HomeState extends State<Home> {
                             cells: [
                               DataCell(Text(userData['name'] ?? '')),
                               DataCell(Text(userData['purpose'] ?? '')),
-                              DataCell(Text(userData['department_type'] ?? '')),
                               DataCell(Text(userData['department'] ?? '')),
+                              DataCell(Text(userData['department_type'] ?? '')),
                               DataCell(Text(DateFormat('MMMM dd, yyyy hh:mm a').format(DateTime.parse(userData['timestamp'])) ?? '')),
                             ],
                           ))
